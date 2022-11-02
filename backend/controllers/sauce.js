@@ -1,18 +1,29 @@
 const Sauce = require("../models/Sauce");
 const fs = require("fs");
+const { log } = require("console");
 
 exports.createSauce = (req, res, next) => {
 	const sauceObject = JSON.parse(req.body.sauce);
-	delete sauceObject._id;
-	delete sauceObject._userId;
+	console.log(req.body);
+	// delete sauceObject._id;
+	// delete sauceObject.userId;
 	const sauce = new Sauce({
 		...sauceObject,
-		userId: req.auth.userId,
+		userId: "USER ID",
+		name: sauceObject.name,
+		manufacturer: sauceObject.manufacturer,
+		description: sauceObject.description,
+		mainPepper: sauceObject.mainPepper,
 		imageUrl: `${req.protocol}://${req.get("host")}/images/${
 			req.file.filename
 		}`,
+		heat: 1,
+		likes: 0,
+		dislikes: 0,
+		usersLiked: sauceObject.usersLiked,
+		usersDisliked: sauceObject.usersDisliked,
 	});
-
+	console.log(sauce);
 	sauce
 		.save()
 		.then(() => {
@@ -84,3 +95,5 @@ exports.getAllSauces = (req, res, next) => {
 		.then((sauces) => res.status(200).json(sauces))
 		.catch((error) => res.status(400).json({ error }));
 };
+
+exports.likeSauce = (req, res, next) => {};

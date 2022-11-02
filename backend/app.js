@@ -1,5 +1,6 @@
 const express = require("express");
 const path = require("path");
+const helmet = require("helmet");
 const mongoose = require("mongoose");
 
 mongoose
@@ -9,9 +10,6 @@ mongoose
 	)
 	.then(() => console.log("Connexion à MongoDB réussie !"))
 	.catch(() => console.log("Connexion à MongoDB échouée !"));
-
-const sauceRoutes = require("./routes/sauce");
-const userRoutes = require("./routes/user");
 
 const app = express();
 
@@ -28,7 +26,12 @@ app.use((req, res, next) => {
 	next();
 });
 
-app.use("/api/sauce", sauceRoutes);
+const sauceRoutes = require("./routes/sauce");
+const userRoutes = require("./routes/user");
+
+app.use(express.json());
+app.use(helmet());
+app.use("/api/sauces", sauceRoutes);
 app.use("/api/auth", userRoutes);
 app.use("/images", express.static(path.join(__dirname, "images")));
 
