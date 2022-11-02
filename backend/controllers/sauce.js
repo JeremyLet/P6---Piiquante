@@ -1,15 +1,13 @@
 const Sauce = require("../models/Sauce");
 const fs = require("fs");
-const { log } = require("console");
 
 exports.createSauce = (req, res, next) => {
 	const sauceObject = JSON.parse(req.body.sauce);
-	console.log(req.body);
-	// delete sauceObject._id;
-	// delete sauceObject.userId;
+	delete sauceObject._id;
+	delete sauceObject.userId;
 	const sauce = new Sauce({
 		...sauceObject,
-		userId: "USER ID",
+		userId: req.auth.userId,
 		name: sauceObject.name,
 		manufacturer: sauceObject.manufacturer,
 		description: sauceObject.description,
@@ -17,20 +15,19 @@ exports.createSauce = (req, res, next) => {
 		imageUrl: `${req.protocol}://${req.get("host")}/images/${
 			req.file.filename
 		}`,
-		heat: 1,
+		heat: sauceObject.heat,
 		likes: 0,
 		dislikes: 0,
 		usersLiked: sauceObject.usersLiked,
 		usersDisliked: sauceObject.usersDisliked,
 	});
-	console.log(sauce);
 	sauce
 		.save()
 		.then(() => {
 			res.status(201).json({ message: "Objet enregistré !" });
 		})
 		.catch((error) => {
-			res.status(400).json({ error });
+			res.status(401).json({ error });
 		});
 };
 
@@ -48,7 +45,7 @@ exports.modifySauce = (req, res, next) => {
 	Sauce.findOne({ _id: req.params.id })
 		.then((sauce) => {
 			if (sauce.userId != req.auth.userId) {
-				res.status(401).json({ message: "Not authorized" });
+				res.status(403).json({ error: "unauthorized request" });
 			} else {
 				Sauce.updateOne(
 					{ _id: req.params.id },
