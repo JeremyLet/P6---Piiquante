@@ -97,4 +97,33 @@ exports.getAllSauces = (req, res, next) => {
 		.catch((error) => res.status(400).json({ error }));
 };
 
-exports.likeSauce = (req, res, next) => {};
+exports.likeSauce = (req, res, next) => {
+	Sauce.findOne({ _id: req.params.id })
+		.then((sauce) => {
+			if (sauce.userId != req.auth.userId) {
+				console.log("Mauvais utilisateur");
+				res.status(403).json({ message: "unauthorized request" });
+			} else {
+				console.log("Bon utilisateur");
+				if (
+					sauce.usersLiked.includes(sauce.userId) ||
+					sauce.usersDisliked.includes(sauce.userId)
+				) {
+					console.log("Deja voté");
+					res.status(403).json({ message: "Vote already done" });
+				} else {
+					if (sauce.usersLiked.includes(sauce.userId)) {
+						// sauce.usersLiked.push(sauce.userId);
+						console.log(sauce.likes);
+					} else if (sauce.dislikes) {
+						// sauce.usersDisliked.push(sauce.userId);
+						console.log("Like négatif");
+					}
+					res.status(200).json({ message: "Vote done !" });
+				}
+			}
+		})
+		.catch((error) => {
+			res.status(500).json({ error });
+		});
+};
