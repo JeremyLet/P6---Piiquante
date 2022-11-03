@@ -4,6 +4,7 @@ const MIME_TYPES = {
 	"image/jpg": "jpg",
 	"image/jpeg": "jpg",
 	"image/png": "png",
+	"image/webp": "webp",
 };
 
 let today = new Date().toJSON().slice(0, 10).replace(/-/g, "-");
@@ -13,7 +14,6 @@ const storage = multer.diskStorage({
 		callback(null, "images");
 	},
 	filename: (req, file, callback) => {
-		console.log(req.file);
 		const name = file.originalname
 			.split(" ")
 			.join("_")
