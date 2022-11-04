@@ -99,23 +99,25 @@ exports.getAllSauces = (req, res, next) => {
 
 exports.likeSauce = (req, res, next) => {
 	Sauce.findOne({ _id: req.params.id }).then((sauce) => {
-		const like = req.body.like;
-		const likesArray = sauce.usersLiked;
-		const dislikesArray = sauce.usersDisliked;
-
-		switch (like) {
+		switch (req.body.like) {
 			case -1:
-				likesArray.push(sauce.userId);
-				console.log("Je dislike " + likesArray);
+				sauce.usersDisliked.push(sauce.userId);
+				sauce.dislikes++;
+				console.log("Je dislike");
 				break;
-			default:
+			case 0:
+				sauce.dislikes = 0;
+				sauce.usersDisliked.splice(sauce.userId);
+				sauce.likes = 0;
+				sauce.usersLiked.splice(sauce.userId);
 				console.log("Je suis neutre");
 				break;
 			case +1:
-				dislikesArray.push(sauce.userId);
-				console.log("Je like " + dislikesArray);
+				sauce.usersLiked.push(sauce.userId);
+				sauce.likes++;
+				console.log("Je like");
 				break;
 		}
-		// sauce.save();
+		sauce.save();
 	});
 };
