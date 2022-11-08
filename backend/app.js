@@ -1,11 +1,10 @@
 const express = require("express");
 const path = require("path");
 const helmet = require("helmet");
-const dotenv = require("dotenv");
-const result = dotenv.config();
+require("dotenv").config();
 const mongoose = require("mongoose");
 
-// ${process.env.DB_USER}
+// ("mongodb+srv://Piiquante:Piiquante@generalcluster.r8fpobw.mongodb.net/Piiquante?retryWrites=true&w=majority");
 
 mongoose
 	.connect(
@@ -14,9 +13,7 @@ mongoose
 	)
 	.then(() => console.log("Connexion à MongoDB réussie !"))
 	.catch(() => console.log("Connexion à MongoDB échouée !"));
-
 const app = express();
-
 app.use((req, res, next) => {
 	res.setHeader("Access-Control-Allow-Origin", "*");
 	res.setHeader(
@@ -29,10 +26,8 @@ app.use((req, res, next) => {
 	);
 	next();
 });
-
 const sauceRoutes = require("./routes/sauce");
 const userRoutes = require("./routes/user");
-
 app.use(express.json());
 app.use(
 	helmet({
@@ -42,5 +37,4 @@ app.use(
 app.use("/api/sauces", sauceRoutes);
 app.use("/api/auth", userRoutes);
 app.use("/images", express.static(path.join(__dirname, "images")));
-
 module.exports = app;
