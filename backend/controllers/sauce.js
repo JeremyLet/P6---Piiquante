@@ -99,8 +99,32 @@ exports.getAllSauces = (req, res, next) => {
 
 exports.likeSauce = (req, res, next) => {
 	Sauce.findOne({ _id: req.params.id }).then((sauce) => {
-		if (sauce.userId != req.auth.userId) {
-			res.status(403).json({ error: "unauthorized request" });
+		if (sauce.userId == req.auth.userId) {
+			const like = req.body.like;
+			switch (like) {
+				case -1:
+					sauce.dislikes++;
+					sauce.usersDisliked.push(sauce.userId);
+					break;
+				case 0:
+					sauce.dislikes = 0;
+					sauce.usersDisliked.splice(sauce.userId);
+					sauce.likes = 0;
+					sauce.usersLiked.splice(sauce.userId);
+					break;
+				case +1:
+					sauce.likes++;
+					sauce.usersLiked.push(sauce.userId);
+					break;
+			}
+			sauce
+				.save()
+				.then(() => {
+					res
+						.status(200)
+						.json({ message: "Vote pris en compte pour votre sauce" });
+				})
+				.catch((error) => res.status(401).json({ error }));
 		} else {
 			const like = req.body.like;
 			switch (like) {
