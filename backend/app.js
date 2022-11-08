@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require("path");
 const helmet = require("helmet");
+require("dotenv").config();
 const mongoose = require("mongoose");
 
 mongoose
