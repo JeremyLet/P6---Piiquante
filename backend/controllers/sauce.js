@@ -98,44 +98,79 @@ exports.getAllSauces = (req, res, next) => {
 };
 
 exports.likeSauce = (req, res, next) => {
-	Sauce.findOne({ _id: req.params.id }).then((sauce) => {
-		const like = req.body.like;
-		switch (like) {
-			case -1:
-				sauce.usersDisliked.push(req.auth.userId);
-				console.log("Je dislike");
-				break;
-			case 0:
-				if (sauce.usersLiked.includes(req.auth.userId)) {
-					sauce.usersLiked.splice(req.auth.userId);
-					console.log("Je retire mon like");
-				} else if (sauce.usersDisliked.includes(req.auth.userId)) {
-					sauce.usersDisliked.splice(req.auth.userId);
-					console.log("Je retire mon dislike");
-				} else {
-					console.log("Aucun vote enregistré, historique de vote neutre");
-				}
-				break;
-			case +1:
-				sauce.usersLiked.push(req.auth.userId);
-				console.log("Je like");
-				break;
-		}
-		sauce.dislikes = sauce.usersDisliked.length;
-		sauce.likes = sauce.usersLiked.length;
-		sauce
-			.save()
-			.then(() => {
-				res
-					.status(200)
-					.json({ message: "Vote pris en compte pour votre sauce" });
-			})
-			.catch((error) => res.status(401).json({ error }));
-	});
+	const like = req.body.like;
+	Sauce.findOne({ _id: req.params.id })
+		.then((sauce) => {
+			switch (like) {
+				/* DISLIKE DE LA SAUCE */
+
+				case -1:
+					Sauce.updateOne(
+						{ _id: req.params.id },
+						{
+							$inc: { dislikes: 1 },
+							$push: { usersDisliked: req.auth.userId },
+						}
+					)
+						.then(() => {
+							res.status(201).json({ message: "Sauce dislikée !" });
+						})
+						.catch((error) => res.status(401).json({ error }));
+					break;
+
+				/* LIKE DE LA SAUCE */
+
+				case 1:
+					Sauce.updateOne(
+						{ _id: req.params.id },
+						{
+							$inc: { likes: 1 },
+							$push: { usersLiked: req.auth.userId },
+						}
+					)
+						.then(() => {
+							res.status(201).json({ message: "Sauce likée !" });
+						})
+						.catch((error) => res.status(401).json({ error }));
+					break;
+
+				/* JE RETIRE MON LIKE OU DISLIKE */
+
+				case 0:
+					if (sauce.usersLiked.includes(req.auth.userId)) {
+						Sauce.updateOne(
+							{ _id: req.params.id },
+							{
+								$inc: { likes: -1 },
+								$pull: { usersLiked: req.auth.userId },
+							}
+						)
+							.then(() => {
+								res.status(201).json({ message: "Like retiré !" });
+							})
+							.catch((error) => res.status(401).json({ error }));
+					}
+					if (sauce.usersDisliked.includes(req.auth.userId)) {
+						Sauce.updateOne(
+							{ _id: req.params.id },
+							{
+								$inc: { dislikes: -1 },
+								$pull: { usersDisliked: req.auth.userId },
+							}
+						)
+							.then(() => {
+								res.status(201).json({ message: "Dislike retiré !" });
+							})
+							.catch((error) => res.status(401).json({ error }));
+					}
+					break;
+			}
+			// sauce.dislikes = sauce.usersDisliked.length;
+			// sauce.likes = sauce.usersLiked.length;
+			// sauce.save();
+		})
+
+		.catch((error) => {
+			res.status(500).json({ error });
+		});
 };
-
-/* TESTS
-
-
-
-FIN DE TESTS*/
