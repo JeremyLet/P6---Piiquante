@@ -103,22 +103,26 @@ exports.likeSauce = (req, res, next) => {
 		switch (like) {
 			case -1:
 				sauce.usersDisliked.push(req.auth.userId);
-				sauce.dislikes = sauce.usersDisliked.length;
+				console.log("Je dislike");
 				break;
 			case 0:
 				if (sauce.usersLiked.includes(req.auth.userId)) {
 					sauce.usersLiked.splice(req.auth.userId);
-					sauce.likes = sauce.usersLiked.length;
-				} else {
+					console.log("Je retire mon like");
+				} else if (sauce.usersDisliked.includes(req.auth.userId)) {
 					sauce.usersDisliked.splice(req.auth.userId);
-					sauce.dislikes = sauce.usersDisliked.length;
+					console.log("Je retire mon dislike");
+				} else {
+					console.log("Aucun vote enregistré, historique de vote neutre");
 				}
 				break;
 			case +1:
 				sauce.usersLiked.push(req.auth.userId);
-				sauce.likes = sauce.usersLiked.length;
+				console.log("Je like");
 				break;
 		}
+		sauce.dislikes = sauce.usersDisliked.length;
+		sauce.likes = sauce.usersLiked.length;
 		sauce
 			.save()
 			.then(() => {
@@ -129,3 +133,9 @@ exports.likeSauce = (req, res, next) => {
 			.catch((error) => res.status(401).json({ error }));
 	});
 };
+
+/* TESTS
+
+
+
+FIN DE TESTS*/
