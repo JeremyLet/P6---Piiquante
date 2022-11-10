@@ -1,3 +1,5 @@
+/** Definition of general variables and connect with mongoose */
+
 const express = require("express");
 const path = require("path");
 const helmet = require("helmet");
@@ -26,15 +28,21 @@ app.use((req, res, next) => {
 	next();
 });
 
+/** Definition of the Rate Limiter params */
+
 const limiter = rateLimit({
 	windowMs: 15 * 60 * 1000, // 15 minutes
-	max: 10, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+	max: 50, // 50 req max per window (15 minutes)
 	standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
 	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
 
+/** Definition of the sauces & users routes */
+
 const sauceRoutes = require("./routes/sauce");
 const userRoutes = require("./routes/user");
+
+/** Activation of JSON format, Helmet Module, Rate Limiter, routes and Multer for the APP */
 
 app.use(express.json());
 app.use(

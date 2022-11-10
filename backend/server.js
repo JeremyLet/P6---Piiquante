@@ -1,3 +1,5 @@
+/** Define et normalize the port number */
+
 const http = require("http");
 const app = require("./app");
 
@@ -14,6 +16,8 @@ const normalizePort = (val) => {
 };
 const port = normalizePort(process.env.PORT);
 app.set("port", port);
+
+/** Error handlers for connections */
 
 const errorHandler = (error) => {
 	if (error.syscall !== "listen") {
@@ -35,6 +39,8 @@ const errorHandler = (error) => {
 			throw error;
 	}
 };
+
+/** Launching server */
 
 const server = http.createServer(app);
 

@@ -1,15 +1,17 @@
+/** Installing necessary modules for security (bcrypt, JSONWebToken, DotEnv and passwordValidator) & getting the user model */
+
 const bcrypt = require("bcrypt");
-
 const User = require("../models/User");
-
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
-
 const passwordValidator = require("password-validator");
 
-let schema = new passwordValidator();
+/** Creating the schema of validation for Password Validator */
 
+let schema = new passwordValidator();
 schema.is().min(8).has().digits(1).has().uppercase(1);
+
+/** Function to create an user */
 
 exports.signup = (req, res, next) => {
 	if (schema.validate(req.body.password) == false) {
@@ -32,6 +34,8 @@ exports.signup = (req, res, next) => {
 			.catch((error) => res.status(500).json({ error }));
 	}
 };
+
+/** Function to login an user */
 
 exports.login = (req, res, next) => {
 	User.findOne({ email: req.body.email })

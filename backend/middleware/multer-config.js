@@ -1,3 +1,5 @@
+/** Implementing Multer and definition of img catalog */
+
 const multer = require("multer");
 
 const MIME_TYPES = {
@@ -7,7 +9,11 @@ const MIME_TYPES = {
 	"image/webp": "webp",
 };
 
+/** Function to create the date of the day for pushing the data in the img name file*/
+
 let today = new Date().toJSON().slice(0, 10).replace(/-/g, "-");
+
+/** Setting of the Multer module */
 
 const storage = multer.diskStorage({
 	destination: (req, file, callback) => {

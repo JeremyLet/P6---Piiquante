@@ -1,3 +1,5 @@
+/** Calling Mongoose and definition of the Sauce model */
+
 const mongoose = require("mongoose");
 
 const sauceSchema = mongoose.Schema({

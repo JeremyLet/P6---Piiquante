@@ -1,5 +1,9 @@
+/** Implementing Json Web Token and Dot Env for security */
+
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
+
+/** Function to handle the authentification with token */
 
 module.exports = (req, res, next) => {
 	try {

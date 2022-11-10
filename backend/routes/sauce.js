@@ -1,3 +1,18 @@
+/** Creating the Sauce router */
+/* Firstly => Calling : Express router, Multer config, Auth Config and Sauce controler */
+/* Secondly => Defining each route */
+/*
+Routes : 
+*
+* Getting ALL Sauces
+* Creating a Sauce
+* Getting ONE Sauce
+* Modify a Sauce
+* Deleting a Sauce
+* Liking / Disliking a Sauce
+*
+*/
+
 const express = require("express");
 const router = express.Router();
 
