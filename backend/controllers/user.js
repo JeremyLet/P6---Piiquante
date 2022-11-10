@@ -11,11 +11,8 @@ let schema = new passwordValidator();
 
 schema.is().min(8).has().digits(1).has().uppercase(1);
 
-console.log(schema.validate("tt8tttH8888"));
-
 exports.signup = (req, res, next) => {
 	if (schema.validate(req.body.password) == false) {
-		req.body.password = "";
 		res.status(400).json({
 			message: schema.validate(req.body.password, { details: true }),
 		});
