@@ -1,10 +1,9 @@
 const express = require("express");
 const path = require("path");
 const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
 require("dotenv").config();
 const mongoose = require("mongoose");
-
-// ("mongodb+srv://Piiquante:Piiquante@generalcluster.r8fpobw.mongodb.net/Piiquante?retryWrites=true&w=majority");
 
 mongoose
 	.connect(
@@ -26,14 +25,24 @@ app.use((req, res, next) => {
 	);
 	next();
 });
+
+const limiter = rateLimit({
+	windowMs: 15 * 60 * 1000, // 15 minutes
+	max: 10, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+	standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+});
+
 const sauceRoutes = require("./routes/sauce");
 const userRoutes = require("./routes/user");
+
 app.use(express.json());
 app.use(
 	helmet({
 		crossOriginResourcePolicy: false,
 	})
 );
+app.use(limiter);
 app.use("/api/sauces", sauceRoutes);
 app.use("/api/auth", userRoutes);
 app.use("/images", express.static(path.join(__dirname, "images")));
