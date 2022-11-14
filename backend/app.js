@@ -3,7 +3,7 @@
 const express = require("express");
 const path = require("path");
 const helmet = require("helmet");
-const rateLimit = require("express-rate-limit");
+// const limiter = require("./middleware/rate-limiter");
 require("dotenv").config();
 const mongoose = require("mongoose");
 
@@ -28,15 +28,6 @@ app.use((req, res, next) => {
 	next();
 });
 
-/** Definition of the Rate Limiter params */
-
-const limiter = rateLimit({
-	windowMs: 15 * 60 * 1000, // 15 minutes
-	max: 100, // 50 req max per window (15 minutes)
-	standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-});
-
 /** Definition of the sauces & users routes */
 
 const sauceRoutes = require("./routes/sauce");
@@ -50,7 +41,7 @@ app.use(
 		crossOriginResourcePolicy: false,
 	})
 );
-app.use(limiter);
+// app.use(limiter);
 app.use("/api/sauces", sauceRoutes);
 app.use("/api/auth", userRoutes);
 app.use("/images", express.static(path.join(__dirname, "images")));
