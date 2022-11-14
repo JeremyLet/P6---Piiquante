@@ -1,7 +1,6 @@
 /** Importing the password validator module */
 
 const passwordValidator = require("password-validator");
-const { $where } = require("../models/User");
 
 /** Creating the schema of validation for Password Validator */
 
