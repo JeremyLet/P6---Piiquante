@@ -23,10 +23,10 @@ exports.createSauce = (req, res, next) => {
 	sauce
 		.save()
 		.then(() => {
-			res.status(201).json({ message: "Objet enregistré !" });
+			res.status(200).json({ message: "Objet enregistré !" });
 		})
 		.catch((error) => {
-			res.status(401).json({ error });
+			res.status(400).json({ error });
 		});
 };
 
@@ -45,7 +45,7 @@ exports.modifySauce = (req, res, next) => {
 	Sauce.findOne({ _id: req.params.id })
 		.then((sauce) => {
 			if (sauce.userId != req.auth.userId) {
-				res.status(403).json({ error: "unauthorized request" });
+				res.status(401).json({ error: "unauthorized request" });
 			} else {
 				Sauce.updateOne(
 					{ _id: req.params.id },
@@ -61,7 +61,7 @@ exports.modifySauce = (req, res, next) => {
 						}
 						res.status(200).json({ message: "Objet modifié!" });
 					})
-					.catch((error) => res.status(401).json({ error }));
+					.catch((error) => res.status(400).json({ error }));
 			}
 		})
 		.catch((error) => {
@@ -75,7 +75,7 @@ exports.deleteSauce = (req, res, next) => {
 	Sauce.findOne({ _id: req.params.id })
 		.then((sauce) => {
 			if (sauce.userId != req.auth.userId) {
-				res.status(403).json({ message: "unauthorized request" });
+				res.status(401).json({ message: "unauthorized request" });
 			} else {
 				const filename = sauce.imageUrl.split("/images/")[1];
 				fs.unlink(`images/${filename}`, () => {
@@ -83,12 +83,12 @@ exports.deleteSauce = (req, res, next) => {
 						.then(() => {
 							res.status(200).json({ message: "Objet supprimé !" });
 						})
-						.catch((error) => res.status(401).json({ error }));
+						.catch((error) => res.status(400).json({ error }));
 				});
 			}
 		})
 		.catch((error) => {
-			res.status(500).json({ error });
+			res.status(400).json({ error });
 		});
 };
 
@@ -97,7 +97,7 @@ exports.deleteSauce = (req, res, next) => {
 exports.getOneSauce = (req, res, next) => {
 	Sauce.findOne({ _id: req.params.id })
 		.then((sauce) => res.status(200).json(sauce))
-		.catch((error) => res.status(404).json({ error }));
+		.catch((error) => res.status(400).json({ error }));
 };
 
 /** Function to display and get all Sauces */
@@ -147,6 +147,6 @@ exports.likeSauce = (req, res, next) => {
 			.then(() => {
 				res.status(200).json({ message: "Vote pris en compte" });
 			})
-			.catch((error) => res.status(401).json({ error }));
+			.catch((error) => res.status(400).json({ error }));
 	});
 };
